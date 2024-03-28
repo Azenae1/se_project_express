@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const mainRouter = require("./routes/index.js");
 
 const app = express();
 
@@ -15,3 +16,5 @@ mongoose
     console.log("Connnected to DB");
   })
   .catch(console.error);
+
+app.use("/", mainRouter);
