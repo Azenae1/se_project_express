@@ -1,5 +1,6 @@
-const { get } = require("mongoose");
+// const { get } = require("mongoose");
 const User = require("../models/user");
+const { ERROR_CODES } = require("../utils/errors");
 
 // GET /users
 const getUsers = (req, res) => {
