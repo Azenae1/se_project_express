@@ -15,7 +15,7 @@ const getItems = (req, res) => {
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
       console.error(err);
@@ -55,5 +55,7 @@ const likeItem = (req, res) => {
         .send({ message: err.message });
     });
 };
-
+module.exports.createClothingItem = (req, res) => {
+  console.log(req.user._id);
+};
 module.exports = { createItem, getItems, likeItem };
