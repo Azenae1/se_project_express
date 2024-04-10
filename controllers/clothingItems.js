@@ -118,7 +118,33 @@ const likeItem = (req, res) => {
     });
 };
 
+const deleteItem = (req, res) => {
+  const { itemId } = req.params;
+  // console.log("Deleting item with ID:", itemId);
+
+  ClothingItem.findByIdAndDelete(itemId)
+    .orFail()
+    .then((item) => {
+      // console.log(item);
+      res.status(200).send({});
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(ERROR_CODES.NOT_FOUND).send({ message: err.message });
+      }
+      return res
+        .status(ERROR_CODES.INTERNAL_SERVER_ERROR)
+        .send({ message: err.message });
+    });
+};
+
 module.exports.createClothingItem = (req, res) => {
   console.log(req.user._id);
 };
-module.exports = { createItem, getItems, likeItem, dislikeItem };
+module.exports = { createItem, getItems, likeItem, dislikeItem, deleteItem };
