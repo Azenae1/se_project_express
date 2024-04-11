@@ -79,7 +79,7 @@ const dislikeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "An error has occurred on the server", error: err });
+          .send({ message: "Item not found", error: err });
       }
       if (err.name === "CastError") {
         return res
@@ -113,7 +113,7 @@ const likeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "An error has occurred on the server", error: err });
+          .send({ message: "Item not found", error: err });
       }
       if (err.name === "CastError") {
         return res
@@ -146,7 +146,7 @@ const deleteItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "An error has occurred on the server", error: err });
+          .send({ message: "Item not found", error: err });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
