@@ -12,7 +12,7 @@ const getItems = (req, res) => {
       console.error(err);
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server", error: err });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -24,13 +24,11 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", error: err });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server", error: err });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -47,16 +45,16 @@ const createItem = (req, res) => {
 //     .catch((err) => {
 //       console.error(err);
 //       if (err.name === "DocumentNotFoundError") {
-//         return res.status(NOT_FOUND).send({ message: "An error has occurred on the server", error: err });
+//         return res.status(NOT_FOUND).send({ message: "An error has occurred on the server" });
 //       }
 //       if (err.name === "CastError") {
 //         return res
 //           .status(BAD_REQUEST)
-//           .send({ message: "An error has occurred on the server", error: err });
+//           .send({ message: "An error has occurred on the server" });
 //       }
 //       return res
 //         .status(INTERNAL_SERVER_ERROR)
-//         .send({ message: "An error has occurred on the server", error: err });
+//         .send({ message: "An error has occurred on the server" });
 //     });
 // };
 
@@ -77,18 +75,14 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Item not found", error: err });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", error: err });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server", error: err });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -111,18 +105,14 @@ const likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Item not found", error: err });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", error: err });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server", error: err });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -139,18 +129,14 @@ const deleteItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", error: err });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Item not found", error: err });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server", error: err });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
