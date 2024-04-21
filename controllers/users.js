@@ -1,8 +1,11 @@
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  CONFLICT_ERROR,
 } = require("../utils/errors");
 
 const getUsers = (req, res) => {
@@ -17,19 +20,52 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+  const { name, avatar, email, password } = req.body;
+  if (!email || !password) {
+    res.status(BAD_REQUEST).send({ message: "An error occurred" });
+    return;
+  }
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        return res.status(CONFLICT_ERROR).send({
+          message: "This email is already registered",
+        });
+      }
 
+      return bcrypt.hash(password, 10).then((hash) => {
+        User.create({ name, avatar, email, password: hash })
+
+          .then((newUser) => {
+            const payload = newUser.toObject();
+            delete payload.password;
+            res.status(201).send({ data: payload });
+          });
+      });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid ID" });
       }
+
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error has occurred on the server" });
     });
+
+  // User.create({ name, avatar })
+  //   .then((user) => res.status(201).send(user))
+
+  //   .catch((err) => {
+  //     console.error(err);
+  //     if (err.name === "ValidationError") {
+  //       return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+  //     }
+  //     return res
+  //       .status(INTERNAL_SERVER_ERROR)
+  //       .send({ message: "An error has occurred on the server" });
+  //   });
 };
 
 const getUser = (req, res) => {
