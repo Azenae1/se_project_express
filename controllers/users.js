@@ -6,6 +6,7 @@ const {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   CONFLICT_ERROR,
+  AUTH_ERROR,
 } = require("../utils/errors");
 
 const getUsers = (req, res) => {
@@ -22,7 +23,7 @@ const getUsers = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    res.status(BAD_REQUEST).send({ message: "An error occurred" });
+    res.status(BAD_REQUEST).send({ message: "Email or password incorrect" });
     return;
   }
   User.findOne({ email })
@@ -66,6 +67,37 @@ const createUser = (req, res) => {
   //       .status(INTERNAL_SERVER_ERROR)
   //       .send({ message: "An error has occurred on the server" });
   //   });
+};
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(BAD_REQUEST).send({ message: "Invalid data" });
+    return;
+  }
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      return res.status(200).send({ token });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(AUTH_ERROR)
+          .send({ message: "Email or password incorrect" });
+      }
+
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      }
+
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error has occurred on the server" });
+    });
 };
 
 const getUser = (req, res) => {
