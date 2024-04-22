@@ -85,7 +85,7 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.message === "Incorrect email or password") {
+      if (err.message === "Email or password incorrect") {
         return res
           .status(AUTH_ERROR)
           .send({ message: "Email or password incorrect" });
