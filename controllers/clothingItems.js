@@ -3,6 +3,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN_ERROR,
 } = require("../utils/errors");
 
 const getItems = (req, res) => {
@@ -31,32 +32,6 @@ const createItem = (req, res) => {
         .send({ message: "An error has occurred on the server" });
     });
 };
-
-// const likeItem = (req, res) => {
-//   const { itemId } = req.params;
-//   ClothingItem.findByIdAndUpdate(
-//     itemId,
-//     { $addToSet: { likes: req.user._id } },
-//     { new: true },
-//   )
-//     .then((item) => {
-//       res.status(200).send({ message: "Item liked" });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       if (err.name === "DocumentNotFoundError") {
-//         return res.status(NOT_FOUND).send({ message: "An error has occurred on the server" });
-//       }
-//       if (err.name === "CastError") {
-//         return res
-//           .status(BAD_REQUEST)
-//           .send({ message: "An error has occurred on the server" });
-//       }
-//       return res
-//         .status(INTERNAL_SERVER_ERROR)
-//         .send({ message: "An error has occurred on the server" });
-//     });
-// };
 
 const dislikeItem = (req, res) => {
   const { itemId } = req.params;
@@ -118,13 +93,19 @@ const likeItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  // console.log("Deleting item with ID:", itemId);
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
-      console.log(item);
-      res.status(200).send({ message: "The item has been deleted" });
+      if (!item.owner.equals(req.user._id)) {
+        res.status(FORBIDDEN_ERROR).send({
+          message: "You can't delete another user's card",
+        });
+        return;
+      }
+      ClothingItem.deleteOne({ _id: req.params.itemId })
+        .orFail()
+        .then(() => res.status(200).send({ message: "Item has been deleted" }));
     })
     .catch((err) => {
       console.error(err);
@@ -140,8 +121,4 @@ const deleteItem = (req, res) => {
     });
 };
 
-// module.exports.createClothingItem = (req, res) => {
-//   console.log(res);
-//   console.log(req.user._id);
-// };
 module.exports = { createItem, getItems, likeItem, dislikeItem, deleteItem };
