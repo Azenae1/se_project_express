@@ -17,11 +17,11 @@ mongoose
   })
   .catch(console.error);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6616c105112385d61895815c",
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: "6616c105112385d61895815c",
+//   };
+//   next();
+// });
 app.use(express.json());
 app.use("/", mainRouter);

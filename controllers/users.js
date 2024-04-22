@@ -139,4 +139,28 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, getCurrentUser, login };
+const updateUser = (req, res) => {
+  const userId = req.user._id;
+  const { name, avatar } = req.body;
+  User.findByIdAndUpdate(
+    userId,
+    { name, avatar },
+    { new: true, runValidators: true },
+  )
+    .then(() => {
+      res.status(200).send({ name, avatar });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Something went wrong!" });
+      }
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ error: "An error has occurred on the server" });
+    });
+};
+
+module.exports = { getUsers, createUser, getCurrentUser, updateUser, login };
