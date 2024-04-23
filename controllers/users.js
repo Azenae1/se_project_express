@@ -36,39 +36,37 @@ const createUser = (req, res) => {
       }
 
       return bcrypt.hash(password, 10).then((hash) => {
-        User.create({ name, avatar, email, password: hash })
-
-          .then((newUser) => {
-            const payload = newUser.toObject();
-            delete payload.password;
-            res.status(201).send({ data: payload });
-          });
+        User.create({ name, avatar, email, password: hash }).then((newUser) => {
+          const payload = newUser.toObject();
+          delete payload.password;
+          res.status(201).send({ data: payload });
+        });
       });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid ID" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
 
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error has occurred on the server" });
     });
-
-  // User.create({ name, avatar })
-  //   .then((user) => res.status(201).send(user))
-
-  //   .catch((err) => {
-  //     console.error(err);
-  //     if (err.name === "ValidationError") {
-  //       return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-  //     }
-  //     return res
-  //       .status(INTERNAL_SERVER_ERROR)
-  //       .send({ message: "An error has occurred on the server" });
-  //   });
 };
+
+// User.create({ name, avatar })
+//   .then((user) => res.status(201).send(user))
+
+//   .catch((err) => {
+//     console.error(err);
+//     if (err.name === "ValidationError") {
+//       return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+//     }
+//     return res
+//       .status(INTERNAL_SERVER_ERROR)
+//       .send({ message: "An error has occurred on the server" });
+//   });
 
 const login = (req, res) => {
   const { email, password } = req.body;
