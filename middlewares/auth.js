@@ -4,7 +4,7 @@ const { JWT_SECRET } = require("../utils/config");
 const { AUTH_ERROR } = require("../utils/errors");
 
 const authorization = (req, res, next) => {
-  const { auth } = req.headers;
+  const { authorization: auth } = req.headers;
   if (!auth || !auth.startsWith("Bearer ")) {
     return res.status(AUTH_ERROR).json({ message: "The session is expired" });
   }
