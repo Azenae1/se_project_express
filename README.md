@@ -4,6 +4,10 @@ This project creates a server for handling the functionality of WTWR project: us
 
 The project was created using the following programms and technologies: -Node.js -Express.js -MongoDB -CRUD operations -RESTful API Design.
 
+## Update
+
+User authorization added, with two new fields: email and password. According routes are protected using the middleware. JWT implemented for easier login.
+
 ## Running the Project
 
 `npm run start` — to launch the server
