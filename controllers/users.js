@@ -25,15 +25,14 @@ const createUser = (req, res) => {
         });
       }
 
-      return bcrypt.hash(password, 10).then((hash) => {
-        return User.create({ name, avatar, email, password: hash }).then(
-          (newUser) => {
-            const payload = newUser.toObject();
-            delete payload.password;
-            res.status(201).send({ data: payload });
-          },
-        );
-      });
+      return bcrypt
+        .hash(password, 10)
+        .then((hash) => User.create({ name, avatar, email, password: hash }))
+        .then((newUser) => {
+          const payload = newUser.toObject();
+          delete payload.password;
+          res.status(201).send({ data: payload });
+        });
     })
     .catch((err) => {
       console.error(err);
