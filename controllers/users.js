@@ -57,7 +57,7 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.status(200).send({ token });
+      return res.send({ token });
     })
     .catch((err) => {
       console.error(err);
@@ -75,7 +75,7 @@ const login = (req, res) => {
 const getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.error(err);
 
@@ -100,7 +100,7 @@ const updateUser = (req, res) => {
     { new: true, runValidators: true },
   )
     .then(() => {
-      res.status(200).send({ name, avatar });
+      res.send({ name, avatar });
     })
     .catch((err) => {
       console.error(err);

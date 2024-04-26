@@ -8,7 +8,7 @@ const {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.send(items))
     .catch((err) => {
       console.error(err);
       return res
@@ -35,17 +35,14 @@ const createItem = (req, res) => {
 
 const dislikeItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findById(itemId)
+  ClothingItem.findByIdAndUpdate(
+    itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
     .orFail()
-    .then((item) => {
-      if (!item.likes.includes(req.user._id)) {
-        return res.status(200).send({ message: "User hasn't liked this item" });
-      }
-      item.likes.pull(req.user._id);
-      return item.save();
-    })
     .then((updatedItem) => {
-      res.status(200).send({ message: "Item disliked", item: updatedItem });
+      res.send({ message: "Item disliked", item: updatedItem });
     })
     .catch((err) => {
       console.error(err);
@@ -63,22 +60,16 @@ const dislikeItem = (req, res) => {
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findById(itemId)
+  ClothingItem.findByIdAndUpdate(
+    itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
     .orFail()
-    .then((item) => {
-      if (item.likes.includes(req.user._id)) {
-        return res
-          .status(200)
-          .send({ message: "User has already liked this item" });
-      }
-      item.likes.push(req.user._id);
-      return item.save();
-    })
     .then((updatedItem) => {
-      res.status(200).send({ message: "Item liked", item: updatedItem });
+      res.send({ message: "Item liked", item: updatedItem });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
@@ -94,7 +85,7 @@ const likeItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
@@ -103,9 +94,9 @@ const deleteItem = (req, res) => {
         });
         return;
       }
-      ClothingItem.deleteOne({ _id: req.params.itemId })
+      ClothingItem.deleteOne({ _id: itemId })
         .orFail()
-        .then(() => res.status(200).send({ message: "Item has been deleted" }));
+        .then(() => res.send({ message: "Item has been deleted" }));
     })
     .catch((err) => {
       console.error(err);
