@@ -66,11 +66,6 @@ const login = (req, res) => {
           .status(AUTH_ERROR)
           .send({ message: "Email or password incorrect" });
       }
-
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-      }
-
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error has occurred on the server" });
