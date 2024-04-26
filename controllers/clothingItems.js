@@ -94,7 +94,7 @@ const deleteItem = (req, res) => {
         });
         return;
       }
-      ClothingItem.deleteOne({ _id: itemId })
+      return ClothingItem.deleteOne({ _id: itemId })
         .orFail()
         .then(() => res.send({ message: "Item has been deleted" }));
     })
