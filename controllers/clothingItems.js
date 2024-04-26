@@ -89,10 +89,9 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        res.status(FORBIDDEN_ERROR).send({
+        return res.status(FORBIDDEN_ERROR).send({
           message: "You can't delete another user's card",
         });
-        return;
       }
       return ClothingItem.deleteOne({ _id: itemId })
         .orFail()
