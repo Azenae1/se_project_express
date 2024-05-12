@@ -99,8 +99,8 @@ const updateUser = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true },
   )
-    .then(() => {
-      res.send({ name, avatar });
+    .then((updatedUser) => {
+      res.send(updatedUser);
     })
     .catch((err) => {
       console.error(err);

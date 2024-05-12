@@ -16,3 +16,7 @@ router.use((req, res) => {
 });
 
 module.exports = router;
+
+// Server launch:
+// GitBash "C:\Program Files\MongoDB\Server\5.0\bin\mongod.exe" --dbpath="c:\data\db"
+// PowerShell C:\"Program Files"\MongoDB\Server\5.0\bin\mongo.exe
