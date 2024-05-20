@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
+const ConflictErr = require("../utils/err_conflict");
+const BadRequestErr = require("../utils/err_badRequest");
+const NotFoundErr = require("../utils/err_notFound");
+const AuthErr = require("../utils/err_auth");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -14,15 +18,13 @@ const {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    res.status(BAD_REQUEST).send({ message: "Email or password incorrect" });
+    next(new BadRequestErr("Email or password incorrect"));
     return;
   }
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        return res.status(CONFLICT_ERROR).send({
-          message: "This email is already registered",
-        });
+        next(new ConflictErr("This email is already registered"));
       }
 
       return bcrypt
@@ -35,21 +37,19 @@ const createUser = (req, res) => {
         });
     })
     .catch((err) => {
-      console.error(err);
+      // console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        next(new BadRequestErr("Invalid data"));
+      } else {
+        next(err);
       }
-
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    res.status(BAD_REQUEST).send({ message: "Invalid data" });
+    next(new BadRequestErr("Invalid data"));
     return;
   }
   User.findUserByCredentials(email, password)
@@ -60,15 +60,12 @@ const login = (req, res) => {
       return res.send({ token });
     })
     .catch((err) => {
-      console.error(err);
+      // console.error(err);
       if (err.message === "Email or password incorrect") {
-        return res
-          .status(AUTH_ERROR)
-          .send({ message: "Email or password incorrect" });
+        next(new AuthErr("Email or password incorrect"));
+      } else {
+        next(err);
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -77,17 +74,16 @@ const getCurrentUser = (req, res) => {
     .orFail()
     .then((user) => res.send(user))
     .catch((err) => {
-      console.error(err);
+      // console.error(err);
 
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        next(new NotFoundErr("User not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        next(new BadRequestErr("Invalid data"));
+      } else {
+        next(err);
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -103,15 +99,12 @@ const updateUser = (req, res) => {
       res.send(updatedUser);
     })
     .catch((err) => {
-      console.error(err);
+      // console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Something went wrong!" });
+        next(new BadRequestErr("Something went wrong!"));
+      } else {
+        next(err);
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ error: "An error has occurred on the server" });
     });
 };
 
