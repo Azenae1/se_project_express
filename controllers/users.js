@@ -7,15 +7,8 @@ const ConflictErr = require("../utils/err_conflict");
 const BadRequestErr = require("../utils/err_badRequest");
 const NotFoundErr = require("../utils/err_notFound");
 const AuthErr = require("../utils/err_auth");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-  CONFLICT_ERROR,
-  AUTH_ERROR,
-} = require("../utils/errors");
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
     next(new BadRequestErr("Email or password incorrect"));
@@ -46,7 +39,7 @@ const createUser = (req, res) => {
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     next(new BadRequestErr("Invalid data"));
@@ -69,7 +62,7 @@ const login = (req, res) => {
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => res.send(user))
@@ -87,7 +80,7 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(

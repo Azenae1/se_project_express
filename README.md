@@ -8,6 +8,10 @@ The project was created using the following programms and technologies: -Node.js
 
 User authorization added, with two new fields: email and password. According routes are protected using the middleware. JWT implemented for easier login.
 
+## Links
+
+Associated domains: https://www.whattowear.crabdance.com/ , https://api.whattowear.crabdance.com/
+
 ## Running the Project
 
 `npm run start` — to launch the server

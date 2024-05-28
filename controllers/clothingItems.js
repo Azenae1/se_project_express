@@ -1,15 +1,10 @@
+/* eslint-disable no-console */
 const ClothingItem = require("../models/clothingItem");
 const BadRequestErr = require("../utils/err_badRequest");
 const NotFoundErr = require("../utils/err_notFound");
 const ForbiddenErr = require("../utils/err_forbidden");
-// const {
-//   BAD_REQUEST,
-//   NOT_FOUND,
-//   INTERNAL_SERVER_ERROR,
-//   FORBIDDEN_ERROR,
-// } = require("../utils/errors");
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send(items))
     .catch((err) => {
@@ -17,7 +12,7 @@ const getItems = (req, res) => {
     });
 };
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   console.log(req.user._id);
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
@@ -32,7 +27,7 @@ const createItem = (req, res) => {
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
     itemId,
@@ -56,7 +51,7 @@ const dislikeItem = (req, res) => {
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   ClothingItem.findByIdAndUpdate(
     itemId,
@@ -77,7 +72,7 @@ const likeItem = (req, res) => {
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItem.findById(itemId)
