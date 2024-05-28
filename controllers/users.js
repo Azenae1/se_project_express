@@ -17,7 +17,7 @@ const createUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        next(new ConflictErr("This email is already registered"));
+        return next(new ConflictErr("This email is already registered"));
       }
 
       return bcrypt
