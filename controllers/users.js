@@ -9,7 +9,7 @@ const NotFoundErr = require("../utils/err_notFound");
 const AuthErr = require("../utils/err_auth");
 
 const createUser = (req, res, next) => {
-  const { name, avatar, email, password } = req.body;
+  const { name, avatar, email, password, city } = req.body;
   if (!email || !password) {
     next(new BadRequestErr("Email or password incorrect"));
     return;
@@ -22,7 +22,9 @@ const createUser = (req, res, next) => {
 
       return bcrypt
         .hash(password, 10)
-        .then((hash) => User.create({ name, avatar, email, password: hash }))
+        .then((hash) =>
+          User.create({ name, avatar, email, password: hash, city }),
+        )
         .then((newUser) => {
           const payload = newUser.toObject();
           delete payload.password;
@@ -82,10 +84,10 @@ const getCurrentUser = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
   const userId = req.user._id;
-  const { name, avatar } = req.body;
+  const { name, avatar, city } = req.body;
   User.findByIdAndUpdate(
     userId,
-    { name, avatar },
+    { name, avatar, city },
     { new: true, runValidators: true },
   )
     .then((updatedUser) => {

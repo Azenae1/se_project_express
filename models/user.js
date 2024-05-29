@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  city: { type: String, minlength: 2 },
 });
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(
