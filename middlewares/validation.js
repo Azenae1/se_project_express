@@ -43,8 +43,9 @@ const createUserValidation = celebrate({
     password: Joi.string().required().messages({
       "string.empty": 'The "password" field must be filled in',
     }),
-    city: Joi.string().min(2).messages({
+    city: Joi.string().required().min(2).messages({
       "string.min": 'The minimum length of the "name" field is 2',
+      "string.empty": 'The "city" field must be filled in',
     }),
   }),
 });
